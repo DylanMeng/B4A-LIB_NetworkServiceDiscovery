@@ -10,7 +10,7 @@ import android.net.nsd.NsdManager;
 
 
 @ShortName("NetworkServiceDiscovery")
-@Version(1.01f)
+@Version(1.00f)
 public class NetworkServiceDiscovery {
 	
 	//Attributes
@@ -36,15 +36,16 @@ public class NetworkServiceDiscovery {
 		this.ba = ba;
 		this.eventName = EventName.toLowerCase(BA.cul);
 		mNsdManager = (NsdManager) BA.applicationContext.getSystemService(Context.NSD_SERVICE);
+		initializeResolveListener();
 	}
 
 	/**
 	 * 
-	 * @param aServiceName Name of the service (aName)
+	 * @param aServiceName Name of the service ("aName")
 	 * @param aServiceType Type of the service ("_http._tcp.")
 	 * @param aServicePort Port of the service (5353)
 	 */
-    public void setupService(String aServiceName, String aServiceType, int aServicePort) {
+    public void setService(String aServiceName, String aServiceType, int aServicePort) {
     	mServiceName = aServiceName;
     	mServiceType = aServiceType;
     	mServicePort = aServicePort;
@@ -55,67 +56,61 @@ public class NetworkServiceDiscovery {
      */
     public void initializeNsd() {
         initializeResolveListener();
-        //mNsdManager.init(mContext.getMainLooper(), this);
     }
     
     /**
-     * 
+     * Initialize the discovery listener
      */
     public void initializeDiscoveryListener() {
-		BA.LogInfo("NetworkServiceDiscovery - Initializing discovery listener"); 
+
         mDiscoveryListener = new NsdManager.DiscoveryListener() {
            
         	@Override
             public void onDiscoveryStarted(String regType) {
-        		if (ba.subExists(eventName + "_onDiscoveryStarted")==true) {
-        			 ba.raiseEvent(this, eventName + "_onDiscoveryStarted", new Object[] { regType, "allo" } );
-        		}
-        		BA.LogInfo(tag + " - Service discovery started");
+        		if (ba.subExists(eventName + "_ondiscoverystarted")) {
+        			ba.raiseEvent(this, eventName + "_ondiscoverystarted", regType);
+            	}  
             }
         	
         	
             @Override
             public void onServiceFound(NsdServiceInfo service) {
-            	BA.LogInfo(tag + " - Service Found");
-            	BA.LogInfo(tag + service.toString());
-            	BA.LogInfo(tag + service.getClass());
             	if (ba.subExists(eventName + "_onservicefound")) {
-            		 ba.raiseEvent(service, eventName + "_onservicefound");
-	            	BA.LogInfo(" - Service discovery success" + service);
-	                if (!service.getServiceType().equals(mServiceType)) {
-	                	BA.LogInfo(tag + " - Unknown Service Type: " + service.getServiceType());
-	                } else if (service.getServiceName().equals(mServiceName)) {
-	                	BA.LogInfo(tag + " - Same machine: " + mServiceName);
-	                } else if (service.getServiceName().contains(mServiceName)){
-	                    mNsdManager.resolveService(service, mResolveListener);
-	                }
-            	}
+            		if (service.getServiceName().contains(mServiceName)) {
+            			mNsdManager.resolveService(service, mResolveListener);
+            		}        
+        			ba.raiseEvent(this, eventName + "_onservicefound", service.toString(), 
+        					service.getServiceName(), 
+        					service.getHost());
+            	}  
             }
             
             @Override
             public void onServiceLost(NsdServiceInfo service) {
-            	BA.LogInfo(tag + " - Service lost" + service);
-                if (mService == service) {
-                    mService = null;
-                }
+            	if (ba.subExists(eventName + "_onservicelost")) {
+        			ba.raiseEvent(this, eventName + "_onservicelost", service.toString());
+            	}  
             }
             
             @Override
             public void onDiscoveryStopped(String serviceType) {
-            	BA.LogInfo(tag + " - Discovery stopped: " + serviceType);
+            	if (ba.subExists(eventName + "_ondiscoverystopped")) {
+        			ba.raiseEvent(this, eventName + "_ondiscoverystopped", serviceType);
+            	}  
             }
             
             @Override
             public void onStartDiscoveryFailed(String serviceType, int errorCode) {
-            	BA.LogInfo(tag + " - Discovery failed: Error code:" + errorCode);
-            	if (ba.subExists(eventName + "_onStartDiscoveryFailed")==true) {
-            		 ba.raiseEvent(this, eventName + "_onStartDiscoveryFailed", new Object[] { mServiceName, "allo" } );
-            	}
+            	if (ba.subExists(eventName + "_onstartdiscoveryfailed")) {
+        			ba.raiseEvent(this, eventName + "_onstartdiscoveryfailed", errorCode);
+            	}  
             }
             
             @Override
             public void onStopDiscoveryFailed(String serviceType, int errorCode) {
-            	BA.LogInfo(tag + " - Discovery failed: Error code:" + errorCode);
+            	if (ba.subExists(eventName + "_onstopdiscoveryfailed")) {
+        			ba.raiseEvent(this, eventName + "_onstopdiscoveryfailed", errorCode);
+            	}  
             }
         };
     }
@@ -128,16 +123,18 @@ public class NetworkServiceDiscovery {
            
         	@Override
             public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
-            	BA.LogInfo(tag + " - Resolve failed" + errorCode);
+        	  	if (ba.subExists(eventName + "_onresolvefailed")) {
+        			ba.raiseEvent(this, eventName + "_onresolvefailed", errorCode);
+            	}  
             }
         	
             @Override
             public void onServiceResolved(NsdServiceInfo serviceInfo) {
-            	BA.LogInfo(tag + " - Resolve Succeeded. " + serviceInfo);
-                if (serviceInfo.getServiceName().equals(mServiceName)) {
-                    BA.LogInfo("Same IP.");
-                    return;
-                }
+        	  	if (ba.subExists(eventName + "_onserviceresolved")) {
+        			ba.raiseEvent(this, eventName + "_onserviceresolved", serviceInfo.toString(),
+        					serviceInfo.getServiceName(), serviceInfo.getHost().toString(), serviceInfo.getPort());
+            	}          	
+            	
                 mService = serviceInfo;
             }
             

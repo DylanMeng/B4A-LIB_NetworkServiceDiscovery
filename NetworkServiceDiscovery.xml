@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <doclet-version-NOT-library-version>1.07</doclet-version-NOT-library-version>
+    <class>
+        <name>b4a.dylanmeng.networkservicediscovery.NetworkServiceDiscovery</name>
+        <shortname>NetworkServiceDiscovery</shortname>
+        <owner>process</owner>
+        <method>
+            <name>stopDiscovery</name>
+            <comment>Stop discovery service</comment>
+            <returntype>void</returntype>
+        </method>
+        <method>
+            <name>setService</name>
+            <comment>
+aServiceName: Name of the service ("aName")
+aServiceType: Type of the service ("_http._tcp.")
+aServicePort: Port of the service (5353)</comment>
+            <returntype>void</returntype>
+            <parameter>
+                <name>aServiceName</name>
+                <type>java.lang.String</type>
+            </parameter>
+            <parameter>
+                <name>aServiceType</name>
+                <type>java.lang.String</type>
+            </parameter>
+            <parameter>
+                <name>aServicePort</name>
+                <type>int</type>
+            </parameter>
+        </method>
+        <method>
+            <name>initializeNsd</name>
+            <comment></comment>
+            <returntype>void</returntype>
+        </method>
+        <method>
+            <name>registerService</name>
+            <comment></comment>
+            <returntype>void</returntype>
+        </method>
+        <method>
+            <name>initializeRegistrationListener</name>
+            <comment>Initialize the registration listener</comment>
+            <returntype>void</returntype>
+        </method>
+        <method>
+            <name>initializeDiscoveryListener</name>
+            <comment>Initialize the discovery listener</comment>
+            <returntype>void</returntype>
+        </method>
+        <method>
+            <name>initializeResolveListener</name>
+            <comment>Initialize the resolve listener</comment>
+            <returntype>void</returntype>
+        </method>
+        <method>
+            <name>Initialize</name>
+            <comment>Initializes the NetworkServiceDiscovery class.</comment>
+            <returntype>void</returntype>
+            <parameter>
+                <name>ba</name>
+                <type>anywheresoftware.b4a.BA</type>
+            </parameter>
+            <parameter>
+                <name>EventName</name>
+                <type>java.lang.String</type>
+            </parameter>
+        </method>
+        <method>
+            <name>discoverServices</name>
+            <comment>Cancel any existing discovery request then initialize the discovery listener</comment>
+            <returntype>void</returntype>
+        </method>
+        <method>
+            <name>tearDown</name>
+            <comment>Tear down service</comment>
+            <returntype>void</returntype>
+        </method>
+        <field>
+            <name>mServicePort</name>
+            <comment></comment>
+            <returntype>int</returntype>
+        </field>
+        <field>
+            <name>mService</name>
+            <comment></comment>
+            <returntype>android.net.nsd.NsdServiceInfo</returntype>
+        </field>
+        <field>
+            <name>mServiceName</name>
+            <comment></comment>
+            <returntype>java.lang.String</returntype>
+        </field>
+        <field>
+            <name>tag</name>
+            <comment></comment>
+            <returntype>java.lang.String</returntype>
+        </field>
+        <field>
+            <name>mServiceType</name>
+            <comment></comment>
+            <returntype>java.lang.String</returntype>
+        </field>
+    </class>
+    <version>1.0</version>
+</root>
